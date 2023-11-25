@@ -27,6 +27,7 @@ class CustomUser(AbstractBaseUser):
         ("admin", "Administration Staff"),
         ("fueling", "Fueling Person"),
         ("maintenance", "Maintenance Person"),
+        ("client", "Client")
     )
 
     iin = models.CharField(max_length=12, blank=True, null=True)

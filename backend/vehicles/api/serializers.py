@@ -19,6 +19,7 @@ class VehicleSerializer(serializers.ModelSerializer):
             "driver",
             "year",
             "fuel_amount",
+            "mileage",
             "license_plate",
             "sitting_capacity",
             "driver_id",

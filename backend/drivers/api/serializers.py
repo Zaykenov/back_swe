@@ -1,6 +1,8 @@
 from django.db import IntegrityError
 from rest_framework import serializers
 from ..models import Driver, Route
+from accounts.models import CustomUser
+from accounts.api.serializers import UserSerializer
 
 
 class DriverSerializer(serializers.ModelSerializer):
@@ -38,26 +40,49 @@ class DriverSerializer(serializers.ModelSerializer):
 
 
 class RouteSerializer(serializers.ModelSerializer):
+    client = UserSerializer(read_only=True)
+
+    class Meta:
+        model = Route
+        fields = (
+            "client",
+            "name",
+            "description",
+            "start_position",
+            "end_position",
+            "status_route",
+        )
+        extra_kwargs = {"status_route": {"read_only": True}}
+
+
+class RouteUpdateSerializer(serializers.ModelSerializer):
     assigned_driver = DriverSerializer(read_only=True)
     driver_id = serializers.PrimaryKeyRelatedField(
-        queryset=Driver.objects.all(),
-        write_only=True,
+        queryset=Driver.objects.all(), write_only=True, required=False
     )
 
     class Meta:
         model = Route
         fields = (
+            "id",
             "name",
             "description",
             "start_position",
             "end_position",
             "assigned_driver",
             "driver_id",
-            "status",
+            "status_route",
         )
 
-    def create(self, validated_data):
-        driver_id = validated_data.pop("driver_id")
-        assigned_driver = Driver.objects.get(pk=driver_id)
-        route = Route.objects.create(assigned_driver=assigned_driver, **validated_data)
-        return route
+    def update(self, instance, validated_data):
+        driver_id = validated_data.pop("driver_id", None)
+
+        if driver_id is not None:
+            assigned_driver = Driver.objects.get(pk=driver_id)
+            instance.assigned_driver = assigned_driver
+
+        for key, value in validated_data.items():
+            setattr(instance, key, value)
+
+        instance.save()
+        return instance

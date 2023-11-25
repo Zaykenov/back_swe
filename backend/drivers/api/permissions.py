@@ -6,7 +6,7 @@ class IsAssignedDriver(permissions.BasePermission):
 
     def has_permission(self, request, view):
         route = view.get_object()
-        return request.user.id == route.assigned_driver.id or request.user.is_staff
+        return route.assigned_driver and (request.user.id == route.assigned_driver.id or request.user.is_staff)
 
 
 class IsDriver(permissions.BasePermission):
@@ -14,3 +14,10 @@ class IsDriver(permissions.BasePermission):
 
     def has_permission(self, request, view):
         return request.user.user_type == "driver"
+
+class IsOwner(permissions.BasePermission):
+    message = "You are not the client for this route."
+
+    def has_permission(self, request, view):
+        route = view.get_object()
+        return request.user == route.client

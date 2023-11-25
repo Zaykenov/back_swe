@@ -4,20 +4,22 @@ from django.db import models
 
 class Route(models.Model):
     STATUS_CHOICES = [
-        ("not_completed", "Not Completed"),
+        ("awaiting", "Awaiting"),
+        ("active", "Active"),
         ("canceled", "Canceled"),
         ("delayed", "Delayed"),
         ("completed", "Completed"),
     ]
 
+    client = models.ForeignKey(CustomUser, on_delete=models.CASCADE)
     name = models.CharField(max_length=255)
     description = models.TextField()
     start_position = models.CharField(max_length=255)
     end_position = models.CharField(max_length=255)
     assigned_driver = models.ForeignKey(
-        "Driver", on_delete=models.CASCADE, related_name="assigned_routes"
+        "Driver", on_delete=models.SET_NULL, null = True, related_name="assigned_routes"
     )
-    status = models.CharField(
+    status_route = models.CharField(
         max_length=20, blank=True, null=True, choices=STATUS_CHOICES
     )
 

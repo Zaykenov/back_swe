@@ -4,16 +4,18 @@ from rest_framework_simplejwt.tokens import RefreshToken
 from django.contrib.auth import authenticate, login
 from drf_spectacular.utils import extend_schema
 from ..models import CustomUser
-from .serializers import UserSerializer
+from .serializers import UserSerializer, LoginSerializer
 
 
 @extend_schema(tags=["Authentication"])
 class UserRegistrationView(generics.CreateAPIView):
+    
     queryset = CustomUser.objects.all()
     serializer_class = UserSerializer
     permission_classes = (permissions.AllowAny,)
 
     def create(self, request, *args, **kwargs):
+        request.data["user_type"] = "client"
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         self.perform_create(serializer)
@@ -33,9 +35,8 @@ class UserRegistrationView(generics.CreateAPIView):
 
 @extend_schema(tags=["Authentication"])
 class UserLoginView(generics.CreateAPIView):
-    serializer_class = UserSerializer
     permission_classes = (permissions.AllowAny,)
-
+    serializer_class = LoginSerializer
     def create(self, request, *args, **kwargs):
         email = request.data.get("email")
         password = request.data.get("password")
