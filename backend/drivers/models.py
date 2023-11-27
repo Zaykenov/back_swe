@@ -16,8 +16,10 @@ class Route(models.Model):
     description = models.TextField()
     start_position = models.CharField(max_length=255)
     end_position = models.CharField(max_length=255)
+    latitude = models.FloatField()
+    longitude = models.FloatField()
     assigned_driver = models.ForeignKey(
-        "Driver", on_delete=models.SET_NULL, null = True, related_name="assigned_routes"
+        "Driver", on_delete=models.SET_NULL, null=True, related_name="assigned_routes"
     )
     status_route = models.CharField(
         max_length=20, blank=True, null=True, choices=STATUS_CHOICES

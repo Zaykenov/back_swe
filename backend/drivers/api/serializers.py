@@ -50,6 +50,8 @@ class RouteSerializer(serializers.ModelSerializer):
             "description",
             "start_position",
             "end_position",
+            "latitude",
+            "longitude",
             "status_route",
         )
         extra_kwargs = {"status_route": {"read_only": True}}
@@ -69,6 +71,8 @@ class RouteUpdateSerializer(serializers.ModelSerializer):
             "description",
             "start_position",
             "end_position",
+            "latitude",
+            "longitude",
             "assigned_driver",
             "driver_id",
             "status_route",

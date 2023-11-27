@@ -1,6 +1,5 @@
 from rest_framework import generics, permissions
 from rest_framework.response import Response
-from rest_framework_simplejwt.tokens import RefreshToken
 from django.contrib.auth import authenticate, login
 from drf_spectacular.utils import extend_schema
 from ..models import CustomUser
@@ -9,7 +8,6 @@ from .serializers import UserSerializer, LoginSerializer
 
 @extend_schema(tags=["Authentication"])
 class UserRegistrationView(generics.CreateAPIView):
-    
     queryset = CustomUser.objects.all()
     serializer_class = UserSerializer
     permission_classes = (permissions.AllowAny,)
@@ -26,9 +24,8 @@ class UserRegistrationView(generics.CreateAPIView):
         )
         login(request, user)
 
-        refresh = RefreshToken.for_user(user)
         return Response(
-            {"access_token": str(refresh.access_token), "refresh_token": str(refresh)},
+            {"user_id": user.id},
             headers=headers,
         )
 
@@ -37,6 +34,7 @@ class UserRegistrationView(generics.CreateAPIView):
 class UserLoginView(generics.CreateAPIView):
     permission_classes = (permissions.AllowAny,)
     serializer_class = LoginSerializer
+
     def create(self, request, *args, **kwargs):
         email = request.data.get("email")
         password = request.data.get("password")
@@ -44,12 +42,6 @@ class UserLoginView(generics.CreateAPIView):
 
         if user:
             login(request, user)
-            refresh = RefreshToken.for_user(user)
-            return Response(
-                {
-                    "access_token": str(refresh.access_token),
-                    "refresh_token": str(refresh),
-                }
-            )
+            return Response({"user_id": user.id})
         else:
             return Response({"error": "Invalid credentials"}, status=400)

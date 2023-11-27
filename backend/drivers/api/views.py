@@ -29,7 +29,7 @@ class AwaitingRouteView(generics.ListAPIView):
 
 
 @extend_schema(tags=["Route"])
-class AwaitingRouteDetailView(generics.RetrieveUpdateAPIView):
+class AwaitingRouteDetailView(generics.RetrieveUpdateDestroyAPIView):
     queryset = Route.objects.all()
     serializer_class = RouteUpdateSerializer
     permission_classes = [permissions.IsAdminUser]
@@ -59,7 +59,7 @@ class ActiveRouteView(generics.ListAPIView):
 
 
 @extend_schema(tags=["Route"])
-class ChangeRouteStatusView(generics.RetrieveUpdateAPIView):
+class ChangeRouteStatusView(generics.RetrieveUpdateDestroyAPIView):
     queryset = Route.objects.all()
     serializer_class = RouteUpdateSerializer
     permission_classes = [IsAssignedDriver]
