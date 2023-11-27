@@ -35,18 +35,7 @@ class AwaitingRouteDetailView(generics.RetrieveUpdateAPIView):
     permission_classes = [permissions.IsAdminUser]
 
     def perform_update(self, serializer):
-        name = serializer.instance.name
-        description = serializer.instance.description
-        start_position = serializer.instance.start_position
-        end_position = serializer.instance.end_position
-        status_route = serializer.instance.status_route
-        serializer.save(
-            name=name,
-            description=description,
-            start_position=start_position,
-            end_position=end_position,
-            status_route=status_route,
-        )
+        serializer.save()
 
 
 @extend_schema(tags=["Route"])
@@ -73,22 +62,11 @@ class ActiveRouteView(generics.ListAPIView):
 class ChangeRouteStatusView(generics.RetrieveUpdateAPIView):
     queryset = Route.objects.all()
     serializer_class = RouteUpdateSerializer
-    permission_classes = [IsAssignedDriver, permissions.IsAdminUser]
+    permission_classes = [IsAssignedDriver]
     lookup_field = "pk"
 
     def perform_update(self, serializer):
-        name = serializer.instance.name
-        description = serializer.instance.description
-        start_position = serializer.instance.start_position
-        end_position = serializer.instance.end_position
-        driver_id = serializer.instance.assigned_driver.id
-        serializer.save(
-            name=name,
-            description=description,
-            start_position=start_position,
-            end_position=end_position,
-            assigned_driver=Driver.objects.get(pk = driver_id),
-        )
+        serializer.save()
 
 
 @extend_schema(tags=["Route"])

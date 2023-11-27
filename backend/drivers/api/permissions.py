@@ -6,7 +6,7 @@ class IsAssignedDriver(permissions.BasePermission):
 
     def has_permission(self, request, view):
         route = view.get_object()
-        return route.assigned_driver and (request.user.id == route.assigned_driver.id or request.user.is_staff)
+        return (request.user.id == route.assigned_driver.id or request.user.is_staff)
 
 
 class IsDriver(permissions.BasePermission):

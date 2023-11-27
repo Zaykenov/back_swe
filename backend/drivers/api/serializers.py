@@ -73,16 +73,13 @@ class RouteUpdateSerializer(serializers.ModelSerializer):
             "driver_id",
             "status_route",
         )
-
     def update(self, instance, validated_data):
-        driver_id = validated_data.pop("driver_id", None)
-
-        if driver_id is not None:
-            assigned_driver = Driver.objects.get(pk=driver_id)
+        driver_id = validated_data.get('driver_id')
+        status_route = validated_data.get('status_route')
+        if driver_id:
+            assigned_driver = Driver.objects.get(pk = driver_id)
             instance.assigned_driver = assigned_driver
-
-        for key, value in validated_data.items():
-            setattr(instance, key, value)
-
+        if status_route:
+            instance.status_route = status_route
         instance.save()
         return instance
